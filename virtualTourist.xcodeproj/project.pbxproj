@@ -13,6 +13,9 @@
 		CD6D734522CD8F450007989C /* virtualTourist.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CD6D734322CD8F450007989C /* virtualTourist.xcdatamodeld */; };
 		CD6D734722CD8F460007989C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CD6D734622CD8F460007989C /* Assets.xcassets */; };
 		CD6D734A22CD8F460007989C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD6D734822CD8F460007989C /* LaunchScreen.storyboard */; };
+		CD8A7D5622D3301A00D75D08 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8A7D5522D3301A00D75D08 /* DataController.swift */; };
+		CD8A7D5822D4554300D75D08 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8A7D5722D4554300D75D08 /* CoreDataManager.swift */; };
+		CD8A7D5A22D4810500D75D08 /* LocationPhotos.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8A7D5922D4810500D75D08 /* LocationPhotos.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +27,9 @@
 		CD6D734622CD8F460007989C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CD6D734922CD8F460007989C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CD6D734B22CD8F460007989C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CD8A7D5522D3301A00D75D08 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
+		CD8A7D5722D4554300D75D08 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
+		CD8A7D5922D4810500D75D08 /* LocationPhotos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPhotos.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,15 +62,50 @@
 		CD6D733B22CD8F450007989C /* virtualTourist */ = {
 			isa = PBXGroup;
 			children = (
-				CD6D733C22CD8F450007989C /* AppDelegate.swift */,
-				CD6D733E22CD8F450007989C /* TravelMap.swift */,
-				CD6D734022CD8F450007989C /* Main.storyboard */,
+				CD8A7D5322D3191100D75D08 /* Networking */,
+				CD8A7D5222D3178E00D75D08 /* Model */,
+				CD8A7D5422D3192C00D75D08 /* Storyboards */,
+				CD8A7D5122D3178900D75D08 /* View Controllers */,
 				CD6D734622CD8F460007989C /* Assets.xcassets */,
-				CD6D734822CD8F460007989C /* LaunchScreen.storyboard */,
+				CD6D733C22CD8F450007989C /* AppDelegate.swift */,
 				CD6D734B22CD8F460007989C /* Info.plist */,
-				CD6D734322CD8F450007989C /* virtualTourist.xcdatamodeld */,
 			);
 			path = virtualTourist;
+			sourceTree = "<group>";
+		};
+		CD8A7D5122D3178900D75D08 /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				CD6D733E22CD8F450007989C /* TravelMap.swift */,
+				CD8A7D5922D4810500D75D08 /* LocationPhotos.swift */,
+			);
+			path = "View Controllers";
+			sourceTree = "<group>";
+		};
+		CD8A7D5222D3178E00D75D08 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				CD6D734322CD8F450007989C /* virtualTourist.xcdatamodeld */,
+				CD8A7D5522D3301A00D75D08 /* DataController.swift */,
+				CD8A7D5722D4554300D75D08 /* CoreDataManager.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		CD8A7D5322D3191100D75D08 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		CD8A7D5422D3192C00D75D08 /* Storyboards */ = {
+			isa = PBXGroup;
+			children = (
+				CD6D734022CD8F450007989C /* Main.storyboard */,
+				CD6D734822CD8F460007989C /* LaunchScreen.storyboard */,
+			);
+			path = Storyboards;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -139,7 +180,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD6D733F22CD8F450007989C /* TravelMap.swift in Sources */,
+				CD8A7D5A22D4810500D75D08 /* LocationPhotos.swift in Sources */,
+				CD8A7D5622D3301A00D75D08 /* DataController.swift in Sources */,
 				CD6D734522CD8F450007989C /* virtualTourist.xcdatamodeld in Sources */,
+				CD8A7D5822D4554300D75D08 /* CoreDataManager.swift in Sources */,
 				CD6D733D22CD8F450007989C /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
