@@ -65,7 +65,7 @@
         <!--Location Photos-->
         <scene sceneID="Oks-sC-XzR">
             <objects>
-                <viewController id="yyd-jY-9bZ" customClass="LocationPhotos" sceneMemberID="viewController">
+                <viewController id="yyd-jY-9bZ" customClass="LocationPhotos" customModule="virtualTourist" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="7VM-c7-wSI">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -136,7 +136,7 @@
                         <viewLayoutGuide key="safeArea" id="BDl-ek-RUb"/>
                     </view>
                     <connections>
-                        <outlet property="collectionView" destination="uIt-da-D4s" id="ajY-Nb-fAW"/>
+                        <outlet property="collectionView" destination="uIt-da-D4s" id="k63-qk-D73"/>
                         <outlet property="mapView" destination="qa3-LT-RYz" id="xko-Ta-GBL"/>
                         <outlet property="navBar" destination="llN-a5-ESw" id="JjY-ro-q9B"/>
                         <outlet property="newCollectionButton" destination="KR3-v2-TH5" id="FnC-DW-Nq2"/>

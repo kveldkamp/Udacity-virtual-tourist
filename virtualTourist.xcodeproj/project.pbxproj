@@ -16,6 +16,7 @@
 		CD8A7D5622D3301A00D75D08 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8A7D5522D3301A00D75D08 /* DataController.swift */; };
 		CD8A7D5822D4554300D75D08 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8A7D5722D4554300D75D08 /* CoreDataManager.swift */; };
 		CD8A7D5A22D4810500D75D08 /* LocationPhotos.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8A7D5922D4810500D75D08 /* LocationPhotos.swift */; };
+		CD8A7D5C22D4F48C00D75D08 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8A7D5B22D4F48C00D75D08 /* Constants.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		CD8A7D5522D3301A00D75D08 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 		CD8A7D5722D4554300D75D08 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		CD8A7D5922D4810500D75D08 /* LocationPhotos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPhotos.swift; sourceTree = "<group>"; };
+		CD8A7D5B22D4F48C00D75D08 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +71,7 @@
 				CD6D734622CD8F460007989C /* Assets.xcassets */,
 				CD6D733C22CD8F450007989C /* AppDelegate.swift */,
 				CD6D734B22CD8F460007989C /* Info.plist */,
+				CD8A7D5B22D4F48C00D75D08 /* Constants.swift */,
 			);
 			path = virtualTourist;
 			sourceTree = "<group>";
@@ -183,6 +186,7 @@
 				CD8A7D5A22D4810500D75D08 /* LocationPhotos.swift in Sources */,
 				CD8A7D5622D3301A00D75D08 /* DataController.swift in Sources */,
 				CD6D734522CD8F450007989C /* virtualTourist.xcdatamodeld in Sources */,
+				CD8A7D5C22D4F48C00D75D08 /* Constants.swift in Sources */,
 				CD8A7D5822D4554300D75D08 /* CoreDataManager.swift in Sources */,
 				CD6D733D22CD8F450007989C /* AppDelegate.swift in Sources */,
 			);

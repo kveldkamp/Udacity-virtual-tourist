@@ -44,6 +44,8 @@ class TravelMap: UIViewController, MKMapViewDelegate {
     @IBOutlet weak var mapView: MKMapView!
     
     var pins: [NSManagedObject] = []
+    //var currentSelectedPin: NSManagedObject
+    var currentCoordinates = CLLocationCoordinate2D()
 
     var pinAnnotation: MKPointAnnotation? = nil
     
@@ -105,9 +107,21 @@ class TravelMap: UIViewController, MKMapViewDelegate {
     
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-        performSegue(withIdentifier: "seeLocationPhotos", sender: self)
+        if let coordinate = view.annotation?.coordinate{
+            currentCoordinates = coordinate
+
+        }
+                performSegue(withIdentifier: "seeLocationPhotos", sender: self)
     }
     
-
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?)
+    {
+        //TODO: send an NSManagedObject instead of just the coordinates
+        if segue.destination is LocationPhotos
+        {
+            let vc = segue.destination as? LocationPhotos
+            vc?.coordinatesToUse = currentCoordinates
+        }
+    }
 }
 

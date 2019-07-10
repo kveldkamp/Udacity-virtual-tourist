@@ -18,18 +18,45 @@ class LocationPhotos: UIViewController{
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var newCollectionButton: UIButton!
     
+    var coordinatesToUse = CLLocationCoordinate2D()
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        print("here are the coords \(coordinatesToUse)")
+        loadPinOnMap()
+        loadPhotos()
+    }
+    
     
     
     
     
     @IBAction func getNewCollection(_ sender: UIButton) {
-        
+        getFlickrPhotos(coordinatesToUse)
     }
-    
-    
     
     @IBAction func goBack(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
+    }
+    
+    
+    func loadPinOnMap(){
+        let pinAnnotation = MKPointAnnotation()
+        pinAnnotation.coordinate = coordinatesToUse
+        mapView.addAnnotation(pinAnnotation)
+        let span = MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5)
+        let region = MKCoordinateRegion(center: pinAnnotation.coordinate, span: span)
+        mapView.setRegion(region, animated: true)
+    }
+    
+    func loadPhotos(){
+        getFlickrPhotos(coordinatesToUse)
+    }
+    
+    func getFlickrPhotos(_ coordinates: CLLocationCoordinate2D){
+        
+        
     }
     
     
