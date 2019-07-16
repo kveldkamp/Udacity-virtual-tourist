@@ -10,8 +10,7 @@ import Foundation
 import UIKit
 import MapKit
 
-class LocationPhotos: UIViewController{
-    
+class LocationPhotos: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource{
     
     @IBOutlet weak var navBar: UINavigationBar!
     @IBOutlet weak var mapView: MKMapView!
@@ -55,8 +54,26 @@ class LocationPhotos: UIViewController{
     }
     
     func getFlickrPhotos(_ coordinates: CLLocationCoordinate2D){
+        NetworkingManager.getPhotosByLocation(lat: coordinates.latitude, lon: coordinates.longitude)
+    }
+    
+    
+    
+    //collectionView methods
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 21
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionViewCell", for: indexPath) as! CollectionViewCell
+        
+        cell.flickrImage.image = nil
+        DispatchQueue.main.async {
+            cell.activitySpinner.startAnimating()
+        }
         
         
+        return cell
     }
     
     
