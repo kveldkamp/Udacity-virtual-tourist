@@ -19,16 +19,18 @@ class LocationPhotos: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     var coordinatesToUse = CLLocationCoordinate2D()
     
+    var photoArray : [Photo] = [Photo]()
+    var photoURLArray : [String] = [String]()
+    var photoArrayNonCoreData = [UIImage]()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         print("here are the coords \(coordinatesToUse)")
         loadPinOnMap()
         loadPhotos()
+        collectionView.reloadData()
     }
-    
-    
-    
     
     
     @IBAction func getNewCollection(_ sender: UIButton) {
@@ -54,7 +56,36 @@ class LocationPhotos: UIViewController, UICollectionViewDelegate, UICollectionVi
     }
     
     func getFlickrPhotos(_ coordinates: CLLocationCoordinate2D){
-        NetworkingManager.getPhotosByLocation(lat: coordinates.latitude, lon: coordinates.longitude)
+        NetworkingManager.getPhotosByLocation(lat: coordinates.latitude, lon: coordinates.longitude, completion: handleFlickrSearchResponse(photos:error:))
+    }
+    
+    
+    func handleFlickrSearchResponse(photos: [PhotoObject], error: Error?){
+        if photos.count > 0 {
+            for photo in photos {
+                buildAndSetImageURL(photo)
+            }
+        }
+        collectionView.reloadData()
+    }
+    
+    func buildAndSetImageURL(_ photo: PhotoObject){
+        let url = "https://farm\(photo.farm).staticflickr.com/\(photo.server)/\(photo.id)_\(photo.secret)_q.jpg"
+        photoURLArray.append(url)
+        NetworkingManager.getPicture(url){ data, error in
+            guard error == nil else{
+                print("error getting this photo")
+                self.photoArrayNonCoreData.append(UIImage(named: "VirtualTourist_120.png")!)
+                return
+            }
+            if let data = data{
+                print("succesfully got photo")
+                self.photoArrayNonCoreData.append(UIImage(data: data)!)
+            }
+            
+        }
+        //set imageURL attribute in coreData
+        // build URL and call getDataFromURL and set into collectionView
     }
     
     
@@ -67,15 +98,19 @@ class LocationPhotos: UIViewController, UICollectionViewDelegate, UICollectionVi
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionViewCell", for: indexPath) as! CollectionViewCell
         
-        cell.flickrImage.image = nil
-        DispatchQueue.main.async {
-            cell.activitySpinner.startAnimating()
+        cell.flickrImage.image = UIImage(named: "VirtualTourist_120.png")
+        cell.activitySpinner.startAnimating()
+       
+        
+        if photoArrayNonCoreData.count > 0 {
+            DispatchQueue.main.async {
+                cell.activitySpinner.stopAnimating()
+                cell.activitySpinner.isHidden = true
+                cell.flickrImage.image = self.photoArrayNonCoreData[0]
+            }
         }
-        
-        
         return cell
     }
-    
-    
-    
 }
+
+

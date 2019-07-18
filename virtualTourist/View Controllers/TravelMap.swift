@@ -18,6 +18,8 @@ class TravelMap: UIViewController, MKMapViewDelegate {
     }
     
     
+    
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         guard let appDelegate =

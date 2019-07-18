@@ -63,7 +63,7 @@ class NetworkingManager {
         return components.url!
     }
     
-    class func getPhotosByLocation(lat: Double, lon: Double){
+    class func getPhotosByLocation(lat: Double, lon: Double, completion: @escaping ([PhotoObject], Error?) -> Void){
         let methodParameters: [String:String] = [
             "method" : Constants.flickrSearch.methodType,
             "api_key" : Constants.flickrApiKey,
@@ -78,10 +78,28 @@ class NetworkingManager {
         let urlRequest = URLRequest(url: buildRequest(methodParameters))
         
         taskForGETRequest(urlRequest: urlRequest, response: FlickrSearchResponse.self) { response, error in
+            guard error == nil else {
+                completion([], error)
+                return
+            }
             if let response = response{
-                print(response)
+                completion(response.photos.photo, nil)
             }
         }
+    }
+    
+    class func getPicture(_ urlString: String, _ completionHandler: @escaping (_ imageData: Data?, _ error: String?) -> Void) {
+        
+        guard let url = URL(string: urlString) else { return }
+        let request = URLRequest(url: url)
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            guard error == nil else {
+                completionHandler(nil, error?.localizedDescription)
+                return
+            }
+            completionHandler(data, nil)
+        }
+        task.resume()
     }
     
     
