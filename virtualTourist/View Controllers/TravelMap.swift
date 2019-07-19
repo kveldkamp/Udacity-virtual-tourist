@@ -22,16 +22,11 @@ class TravelMap: UIViewController, MKMapViewDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        guard let appDelegate =
-            UIApplication.shared.delegate as? AppDelegate else {
-                return
-        }
     
         let managedContext =
-            appDelegate.persistentContainer.viewContext
+            CoreDataManager.getContext()
         
-        let fetchRequest =
-            NSFetchRequest<NSManagedObject>(entityName: "Pin")
+         let fetchRequest : NSFetchRequest<Pin> = Pin.fetchRequest()
         
         do {
             pins = try managedContext.fetch(fetchRequest)
@@ -61,7 +56,7 @@ class TravelMap: UIViewController, MKMapViewDelegate {
             pinAnnotation = MKPointAnnotation()
             pinAnnotation!.coordinate = locCoord
             
-            print("\(#function) Coordinate: \(locCoord.latitude),\(locCoord.longitude)")
+            print(" Coordinate: \(locCoord.latitude),\(locCoord.longitude)")
             
             mapView.addAnnotation(pinAnnotation!)
             savePin(lat: locCoord.latitude, long: locCoord.longitude)
@@ -80,12 +75,9 @@ class TravelMap: UIViewController, MKMapViewDelegate {
     
     
     func savePin(lat: CLLocationDegrees, long: CLLocationDegrees) {
-        guard let appDelegate =
-            UIApplication.shared.delegate as? AppDelegate else {
-                return
-        }
+
         let managedContext =
-            appDelegate.persistentContainer.viewContext
+            CoreDataManager.getContext()
         
         let entity =
             NSEntityDescription.entity(forEntityName: "Pin",
@@ -99,12 +91,8 @@ class TravelMap: UIViewController, MKMapViewDelegate {
         pin.setValue(doubleLat, forKey: "latitude")
         pin.setValue(doubleLong, forKeyPath: "longitude")
         
-        do {
-            try managedContext.save()
-            pins.append(pin)
-        } catch let error as NSError {
-            print("Could not save. \(error), \(error.userInfo)")
-        }
+        CoreDataManager.saveContext()
+        pins.append(pin)
     }
     
     
