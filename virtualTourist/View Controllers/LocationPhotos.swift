@@ -11,11 +11,12 @@ import UIKit
 import MapKit
 import CoreData
 
-class LocationPhotos: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource{
+class LocationPhotos: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource,NSFetchedResultsControllerDelegate {
     
     @IBOutlet weak var navBar: UINavigationBar!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var collectionViewLayout: UICollectionViewFlowLayout!
     @IBOutlet weak var newCollectionButton: UIButton!
     
     var coordinatesToUse = CLLocationCoordinate2D()
@@ -30,13 +31,24 @@ class LocationPhotos: UIViewController, UICollectionViewDelegate, UICollectionVi
         super.viewDidLoad()
         print("here are the coords \(coordinatesToUse)")
         loadPinOnMap()
+        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
         loadPhotos()
         collectionView.reloadData()
+        
+        
+        //collection view spacing and setup
+        let space: CGFloat = 3.0
+        let viewWidth = self.view.frame.width
+        let dimension: CGFloat = (viewWidth-(2*space))/3.0
+        
+        collectionViewLayout.minimumInteritemSpacing = space
+        collectionViewLayout.minimumLineSpacing = space
+        collectionViewLayout.itemSize = CGSize(width: dimension, height: dimension)
     }
     
     
     @IBAction func getNewCollection(_ sender: UIButton) {
-        getFlickrPhotos(coordinatesToUse)
+        getFlickrPhotos()
     }
     
     @IBAction func goBack(_ sender: Any) {
@@ -46,70 +58,24 @@ class LocationPhotos: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     func loadPinOnMap(){
         let pinAnnotation = MKPointAnnotation()
-        pinAnnotation.coordinate = coordinatesToUse
-        mapView.addAnnotation(pinAnnotation)
+        let lat = CLLocationDegrees(selectedPin.latitude)
+        let lon = CLLocationDegrees(selectedPin.longitude)
+        let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+        pinAnnotation.coordinate = coordinate
         let span = MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5)
         let region = MKCoordinateRegion(center: pinAnnotation.coordinate, span: span)
-        mapView.setRegion(region, animated: true)
+        
+        DispatchQueue.main.async{
+            self.mapView.setRegion(region, animated: true)
+            self.mapView.addAnnotation(pinAnnotation)
+        }
+        
     }
     
     func loadPhotos(){
-        getFlickrPhotos(coordinatesToUse)
-    }
-    
-    func getFlickrPhotos(_ coordinates: CLLocationCoordinate2D){
-        NetworkingManager.getPhotosByLocation(lat: coordinates.latitude, lon: coordinates.longitude, completion: handleFlickrSearchResponse(photos:error:))
-    }
-    
-    
-    func handleFlickrSearchResponse(photos: [PhotoObject], error: Error?){
-        if photos.count > 0 {
-            for photo in photos {
-                buildAndSetImageURL(photo)
-            }
-        }
-        CoreDataManager.saveContext()
-        collectionView.reloadData()
-    }
-    
-    func buildAndSetImageURL(_ photo: PhotoObject){
-        let url = "https://farm\(photo.farm).staticflickr.com/\(photo.server)/\(photo.id)_\(photo.secret)_q.jpg"
-        let context = CoreDataManager.getContext()
-         let photo:Photo = NSEntityDescription.insertNewObject(forEntityName: "Photo", into: context ) as! Photo
-        
-        photo.urlString = url
-        
-        if let url = photo.urlString{
-            NetworkingManager.getPicture(url){ data, error in
-                guard error == nil else{
-                    print("error getting this photo")
-                    return
-                }
-                if let data = data{
-                    print("succesfully got photo")
-                    DispatchQueue.main.async {
-                        photo.imageData = data as NSData?
-                    }
-                }
-            }
-        }
-    }
-    
-    
-    
-    //collectionView methods
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 21
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionViewCell", for: indexPath) as! CollectionViewCell
-        
-        cell.flickrImage.image = UIImage(named: "VirtualTourist_120.png")
-        cell.activitySpinner.startAnimating()
-       
         let fetchRequest:NSFetchRequest<Photo> = Photo.fetchRequest()
         fetchRequest.sortDescriptors = []
+        fetchRequest.predicate = NSPredicate(format: "pin = %@", selectedPin)
         let context = CoreDataManager.getContext()
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
         
@@ -125,24 +91,92 @@ class LocationPhotos: UIViewController, UICollectionViewDelegate, UICollectionVi
         if let data = fetchedResultsController.fetchedObjects, data.count > 0 {
             print("\(data.count) photos from core data fetched.")
             photos = data
-            self.collectionView.reloadData()
+        } else {
+            getFlickrPhotos()
         }
+    }
     
+    func getFlickrPhotos(){
+        NetworkingManager.getPhotosByLocation(lat: selectedPin.latitude, lon: selectedPin.longitude, completion: handleFlickrSearchResponse(results:error:))
+        collectionView.reloadData()
+    }
+    
+    
+    func handleFlickrSearchResponse(results: [PhotoObject], error: Error?){
+        if results.count > 0 {
+            for result in results {
+                buildAndSetImageURL(result)
+            }
+        }
+    }
+    
+    func buildAndSetImageURL(_ result: PhotoObject){
+        let url = "https://farm\(result.farm).staticflickr.com/\(result.server)/\(result.id)_\(result.secret)_q.jpg"
+        let context = CoreDataManager.getContext()
+         let photo:Photo = NSEntityDescription.insertNewObject(forEntityName: "Photo", into: context ) as! Photo
         
-        let photo = photos[indexPath.row]
-
-        if photo.imageData != nil{
-            if photos.count > 0 {
-                DispatchQueue.main.async {
-                    cell.activitySpinner.stopAnimating()
-                    cell.activitySpinner.isHidden = true
-                    cell.flickrImage.image = UIImage(data: photo.imageData! as Data)
+        photo.urlString = url
+        
+        if let url = photo.urlString{
+            NetworkingManager.getPicture(url){ data, error in
+                guard error == nil else{
+                    print("error getting this photo")
+                    return
+                }
+                if let data = data{
+                    print("succesfully got photo")
+                    DispatchQueue.main.async {
+                        photo.imageData = data as NSData?
+                        photo.pin = self.selectedPin
+                        self.photos.append(photo)
+                         CoreDataManager.saveContext()
+                        self.collectionView.reloadData()
+                    }
                 }
             }
-            
         }
-        return cell
     }
+    
+    
+    
+    //collectionView methods
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return photos.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionViewCell", for: indexPath) as! CollectionViewCell
+        
+        let photo = photos[indexPath.row]
+        cell.flickrImage.image = UIImage(named: "VirtualTourist_120.png")
+        cell.activitySpinner.startAnimating()
+    
+        if photo.imageData != nil{
+            DispatchQueue.main.async {
+                cell.activitySpinner.stopAnimating()
+                cell.activitySpinner.isHidden = true
+                cell.flickrImage.image = UIImage(data: photo.imageData! as Data)
+            }
+        }
+        else{
+            if let url = photo.urlString{
+                NetworkingManager.getPicture(url, {data, error in
+                    guard error != nil else {
+                        print("error getting photos")
+                        return
+                    }
+                    
+                    DispatchQueue.main.async {
+                        photo.imageData = data as NSData?
+                        cell.activitySpinner.stopAnimating()
+                        cell.activitySpinner.isHidden = true
+                        cell.flickrImage.image = UIImage(data: photo.imageData! as Data)
+                    }
+            })
+        }
+    }
+    return cell
+}
 }
 
 

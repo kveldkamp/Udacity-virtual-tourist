@@ -162,6 +162,7 @@
                     </view>
                     <connections>
                         <outlet property="collectionView" destination="uIt-da-D4s" id="k63-qk-D73"/>
+                        <outlet property="collectionViewLayout" destination="aRw-4R-N63" id="w9g-dh-j1X"/>
                         <outlet property="mapView" destination="qa3-LT-RYz" id="xko-Ta-GBL"/>
                         <outlet property="navBar" destination="llN-a5-ESw" id="JjY-ro-q9B"/>
                         <outlet property="newCollectionButton" destination="KR3-v2-TH5" id="FnC-DW-Nq2"/>
