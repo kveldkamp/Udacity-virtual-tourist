@@ -19,6 +19,7 @@ class LocationPhotos: UIViewController, UICollectionViewDelegate, UICollectionVi
     @IBOutlet weak var collectionViewLayout: UICollectionViewFlowLayout!
     @IBOutlet weak var newCollectionButton: UIButton!
     
+    
     var coordinatesToUse = CLLocationCoordinate2D()
     
     var photos = [Photo]()
@@ -122,8 +123,6 @@ class LocationPhotos: UIViewController, UICollectionViewDelegate, UICollectionVi
                 let photo = photos[indexPath.row]
                 CoreDataManager.getContext().delete(photo)
                 self.photos.remove(at: indexPath.row)
-                
-                
             }
             CoreDataManager.saveContext()
             var selectedIndexPathsNonNS = [IndexPath]()

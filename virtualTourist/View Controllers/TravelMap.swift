@@ -19,11 +19,19 @@ class TravelMap: UIViewController, MKMapViewDelegate {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        editingLabel.isHidden = true
+        editTapped = false
         populatePins()
     }
 
+    var editTapped = false
+    
     @IBOutlet weak var navBar: UINavigationBar!
     @IBOutlet weak var mapView: MKMapView!
+    @IBOutlet weak var editingLabel: UILabel!
+    @IBOutlet weak var editButton: UIBarButtonItem!
+    
+    
     
     
     @IBAction func longPressedOnMap(_ sender: UILongPressGestureRecognizer) {
@@ -40,6 +48,26 @@ class TravelMap: UIViewController, MKMapViewDelegate {
             
             mapView.addAnnotation(pinAnnotation)
             savePin(lat: locCoord.latitude, long: locCoord.longitude)
+        }
+    }
+    
+    
+    @IBAction func editButtonPressed(_ sender: UIBarButtonItem) {
+        if editTapped{
+            editTapped = false
+        }
+        else if !editTapped{
+            editTapped = true
+        }
+        if editTapped{
+            editButton.title = "Done"
+            mapView.frame.origin.y -= 50
+            editingLabel.isHidden = false
+        }
+        else if !editTapped{
+            editButton.title = "Edit"
+            mapView.frame.origin.y += 50
+            editingLabel.isHidden = true
         }
     }
     
@@ -86,13 +114,11 @@ class TravelMap: UIViewController, MKMapViewDelegate {
         let doubleLong = Double(long)
         pin.setValue(doubleLat, forKey: "latitude")
         pin.setValue(doubleLong, forKeyPath: "longitude")
-        
         CoreDataManager.saveContext()
     }
     
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-        mapView.deselectAnnotation(view.annotation, animated: true)
         let lat = view.annotation?.coordinate.latitude
         let lon = view.annotation?.coordinate.longitude
         print("The selected pin's lat:\(String(describing: lat)), lon:\(String(describing: lon))")
@@ -103,9 +129,20 @@ class TravelMap: UIViewController, MKMapViewDelegate {
                 if pin.latitude == lat!, pin.longitude == lon! {
                     let selectedPin = pin
                     print("Found pin")
-                
-                    DispatchQueue.main.async {
-                         self.performSegue(withIdentifier: "seeLocationPhotos", sender: selectedPin)
+                    if editTapped {
+                        //Delete pin
+                        DispatchQueue.main.async {
+                            CoreDataManager.getContext().delete(selectedPin)
+                            CoreDataManager.saveContext()
+                            self.mapView.removeAnnotation(view.annotation!)
+                        }
+                    }
+                    else{
+                        //Go to pin's info
+                        mapView.deselectAnnotation(view.annotation, animated: true)
+                        DispatchQueue.main.async {
+                             self.performSegue(withIdentifier: "seeLocationPhotos", sender: selectedPin)
+                        }
                     }
                 }
             }
