@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import MapKit
+import CoreData
 
 class LocationPhotos: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource{
     
@@ -19,7 +20,8 @@ class LocationPhotos: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     var coordinatesToUse = CLLocationCoordinate2D()
     
-    var photoArray : [Photo] = [Photo]()
+    var photos = [Photo]()
+    var selectedPin : Pin!
     var photoURLArray : [String] = [String]()
     var photoArrayNonCoreData = [UIImage]()
     
@@ -66,26 +68,31 @@ class LocationPhotos: UIViewController, UICollectionViewDelegate, UICollectionVi
                 buildAndSetImageURL(photo)
             }
         }
+        CoreDataManager.saveContext()
         collectionView.reloadData()
     }
     
     func buildAndSetImageURL(_ photo: PhotoObject){
         let url = "https://farm\(photo.farm).staticflickr.com/\(photo.server)/\(photo.id)_\(photo.secret)_q.jpg"
-        photoURLArray.append(url)
-        NetworkingManager.getPicture(url){ data, error in
-            guard error == nil else{
-                print("error getting this photo")
-                self.photoArrayNonCoreData.append(UIImage(named: "VirtualTourist_120.png")!)
-                return
+        let context = CoreDataManager.getContext()
+         let photo:Photo = NSEntityDescription.insertNewObject(forEntityName: "Photo", into: context ) as! Photo
+        
+        photo.urlString = url
+        
+        if let url = photo.urlString{
+            NetworkingManager.getPicture(url){ data, error in
+                guard error == nil else{
+                    print("error getting this photo")
+                    return
+                }
+                if let data = data{
+                    print("succesfully got photo")
+                    DispatchQueue.main.async {
+                        photo.imageData = data as NSData?
+                    }
+                }
             }
-            if let data = data{
-                print("succesfully got photo")
-                self.photoArrayNonCoreData.append(UIImage(data: data)!)
-            }
-            
         }
-        //set imageURL attribute in coreData
-        // build URL and call getDataFromURL and set into collectionView
     }
     
     
@@ -101,13 +108,38 @@ class LocationPhotos: UIViewController, UICollectionViewDelegate, UICollectionVi
         cell.flickrImage.image = UIImage(named: "VirtualTourist_120.png")
         cell.activitySpinner.startAnimating()
        
+        let fetchRequest:NSFetchRequest<Photo> = Photo.fetchRequest()
+        fetchRequest.sortDescriptors = []
+        let context = CoreDataManager.getContext()
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
         
-        if photoArrayNonCoreData.count > 0 {
-            DispatchQueue.main.async {
-                cell.activitySpinner.stopAnimating()
-                cell.activitySpinner.isHidden = true
-                cell.flickrImage.image = self.photoArrayNonCoreData[0]
+        do {
+            try fetchedResultsController.performFetch()
+            
+        } catch {
+            let fetchError = error as NSError
+            print("Unable to Perform Fetch Request")
+            print("\(fetchError), \(fetchError.localizedDescription)")
+        }
+        
+        if let data = fetchedResultsController.fetchedObjects, data.count > 0 {
+            print("\(data.count) photos from core data fetched.")
+            photos = data
+            self.collectionView.reloadData()
+        }
+    
+        
+        let photo = photos[indexPath.row]
+
+        if photo.imageData != nil{
+            if photos.count > 0 {
+                DispatchQueue.main.async {
+                    cell.activitySpinner.stopAnimating()
+                    cell.activitySpinner.isHidden = true
+                    cell.flickrImage.image = UIImage(data: photo.imageData! as Data)
+                }
             }
+            
         }
         return cell
     }

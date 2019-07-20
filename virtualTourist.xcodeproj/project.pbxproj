@@ -14,12 +14,13 @@
 		CD6D734522CD8F450007989C /* virtualTourist.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CD6D734322CD8F450007989C /* virtualTourist.xcdatamodeld */; };
 		CD6D734722CD8F460007989C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CD6D734622CD8F460007989C /* Assets.xcassets */; };
 		CD6D734A22CD8F460007989C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD6D734822CD8F460007989C /* LaunchScreen.storyboard */; };
-		CD8A7D5622D3301A00D75D08 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8A7D5522D3301A00D75D08 /* DataController.swift */; };
 		CD8A7D5822D4554300D75D08 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8A7D5722D4554300D75D08 /* CoreDataManager.swift */; };
 		CD8A7D5A22D4810500D75D08 /* LocationPhotos.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8A7D5922D4810500D75D08 /* LocationPhotos.swift */; };
 		CD8A7D5C22D4F48C00D75D08 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8A7D5B22D4F48C00D75D08 /* Constants.swift */; };
 		CD8A7D5E22D57E7B00D75D08 /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8A7D5D22D57E7B00D75D08 /* CollectionViewCell.swift */; };
 		CD8A7D6022D5842A00D75D08 /* NetworkingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8A7D5F22D5842A00D75D08 /* NetworkingManager.swift */; };
+		CD9B393622E2ABD0002F1AE9 /* Photo+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9B393522E2ABD0002F1AE9 /* Photo+CoreDataClass.swift */; };
+		CD9B393822E2ABF3002F1AE9 /* Photo+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9B393722E2ABF3002F1AE9 /* Photo+CoreDataProperties.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,12 +33,13 @@
 		CD6D734622CD8F460007989C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CD6D734922CD8F460007989C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CD6D734B22CD8F460007989C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		CD8A7D5522D3301A00D75D08 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 		CD8A7D5722D4554300D75D08 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		CD8A7D5922D4810500D75D08 /* LocationPhotos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPhotos.swift; sourceTree = "<group>"; };
 		CD8A7D5B22D4F48C00D75D08 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		CD8A7D5D22D57E7B00D75D08 /* CollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewCell.swift; sourceTree = "<group>"; };
 		CD8A7D5F22D5842A00D75D08 /* NetworkingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingManager.swift; sourceTree = "<group>"; };
+		CD9B393522E2ABD0002F1AE9 /* Photo+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Photo+CoreDataClass.swift"; sourceTree = "<group>"; };
+		CD9B393722E2ABF3002F1AE9 /* Photo+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Photo+CoreDataProperties.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,8 +98,9 @@
 			isa = PBXGroup;
 			children = (
 				CD6D734322CD8F450007989C /* virtualTourist.xcdatamodeld */,
-				CD8A7D5522D3301A00D75D08 /* DataController.swift */,
 				CD8A7D5722D4554300D75D08 /* CoreDataManager.swift */,
+				CD9B393522E2ABD0002F1AE9 /* Photo+CoreDataClass.swift */,
+				CD9B393722E2ABF3002F1AE9 /* Photo+CoreDataProperties.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -191,14 +194,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD9B393622E2ABD0002F1AE9 /* Photo+CoreDataClass.swift in Sources */,
 				CD6D733F22CD8F450007989C /* TravelMap.swift in Sources */,
 				CD8A7D5A22D4810500D75D08 /* LocationPhotos.swift in Sources */,
 				CD8A7D5E22D57E7B00D75D08 /* CollectionViewCell.swift in Sources */,
-				CD8A7D5622D3301A00D75D08 /* DataController.swift in Sources */,
 				CD6D734522CD8F450007989C /* virtualTourist.xcdatamodeld in Sources */,
 				CD618D1522DE2FCD0081E780 /* FlickrSearchResponse.swift in Sources */,
 				CD8A7D5C22D4F48C00D75D08 /* Constants.swift in Sources */,
 				CD8A7D5822D4554300D75D08 /* CoreDataManager.swift in Sources */,
+				CD9B393822E2ABF3002F1AE9 /* Photo+CoreDataProperties.swift in Sources */,
 				CD6D733D22CD8F450007989C /* AppDelegate.swift in Sources */,
 				CD8A7D6022D5842A00D75D08 /* NetworkingManager.swift in Sources */,
 			);

@@ -16,35 +16,15 @@ class TravelMap: UIViewController, MKMapViewDelegate {
         super.viewDidLoad()
         mapView.delegate = self
     }
-    
-    
-    
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-    
-        let managedContext =
-            CoreDataManager.getContext()
-        
-         let fetchRequest : NSFetchRequest<Pin> = Pin.fetchRequest()
-        
-        do {
-            pins = try managedContext.fetch(fetchRequest)
-            populatePins()
-        } catch let error as NSError {
-            print("Could not fetch. \(error), \(error.userInfo)")
-        }
+        populatePins()
     }
 
     @IBOutlet weak var navBar: UINavigationBar!
-    
     @IBOutlet weak var mapView: MKMapView!
     
-    var pins: [NSManagedObject] = []
-    //var currentSelectedPin: NSManagedObject
-    var currentCoordinates = CLLocationCoordinate2D()
-
-    var pinAnnotation: MKPointAnnotation? = nil
     
     @IBAction func longPressedOnMap(_ sender: UILongPressGestureRecognizer) {
         
@@ -53,23 +33,39 @@ class TravelMap: UIViewController, MKMapViewDelegate {
         
         if sender.state == .began {
             
-            pinAnnotation = MKPointAnnotation()
-            pinAnnotation!.coordinate = locCoord
+            let pinAnnotation = MKPointAnnotation()
+            pinAnnotation.coordinate = locCoord
             
             print(" Coordinate: \(locCoord.latitude),\(locCoord.longitude)")
             
-            mapView.addAnnotation(pinAnnotation!)
+            mapView.addAnnotation(pinAnnotation)
             savePin(lat: locCoord.latitude, long: locCoord.longitude)
         }
     }
     
     
     func populatePins(){
-        for pin in pins {
-            pinAnnotation = MKPointAnnotation()
-            pinAnnotation!.coordinate.latitude = (pin.value(forKeyPath: "latitude") as? CLLocationDegrees)!
-            pinAnnotation!.coordinate.longitude = (pin.value(forKeyPath: "longitude") as? CLLocationDegrees)!
-            mapView.addAnnotation(pinAnnotation!)
+        let fetchRequest: NSFetchRequest<Pin> = Pin.fetchRequest()
+        
+        do{
+            let results = try CoreDataManager.getContext().fetch(fetchRequest)
+            print("found \(results.count) pins")
+            var annotations = [MKPointAnnotation]()
+            for pin in results as[Pin]{
+                let lat = CLLocationDegrees(pin.latitude)
+                let long = CLLocationDegrees(pin.longitude)
+                let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
+                let annotation = MKPointAnnotation()
+                annotation.coordinate = coordinate
+                annotations.append(annotation)
+            }
+            
+            DispatchQueue.main.async {
+                self.mapView.addAnnotations(annotations)
+            }
+        }
+        catch{
+             print("Error getting pins: \(error)")
         }
     }
     
@@ -92,16 +88,31 @@ class TravelMap: UIViewController, MKMapViewDelegate {
         pin.setValue(doubleLong, forKeyPath: "longitude")
         
         CoreDataManager.saveContext()
-        pins.append(pin)
     }
     
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-        if let coordinate = view.annotation?.coordinate{
-            currentCoordinates = coordinate
-
+        mapView.deselectAnnotation(view.annotation, animated: true)
+        let lat = view.annotation?.coordinate.latitude
+        let lon = view.annotation?.coordinate.longitude
+        print("The selected pin's lat:\(String(describing: lat)), lon:\(String(describing: lon))")
+        let fetchRequest:NSFetchRequest<Pin> = Pin.fetchRequest()
+        do {
+            let searchResults = try CoreDataManager.getContext().fetch(fetchRequest)
+            for pin in searchResults as [Pin] {
+                if pin.latitude == lat!, pin.longitude == lon! {
+                    let selectedPin = pin
+                    print("Found pin")
+                
+                    DispatchQueue.main.async {
+                         self.performSegue(withIdentifier: "seeLocationPhotos", sender: selectedPin)
+                    }
+                }
+            }
         }
-                performSegue(withIdentifier: "seeLocationPhotos", sender: self)
+        catch {
+            print("Error: \(error)")
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
@@ -109,8 +120,10 @@ class TravelMap: UIViewController, MKMapViewDelegate {
         //TODO: send an NSManagedObject instead of just the coordinates
         if segue.destination is LocationPhotos
         {
-            let vc = segue.destination as? LocationPhotos
-            vc?.coordinatesToUse = currentCoordinates
+            if let vc = segue.destination as? LocationPhotos{
+                let selectedPin = sender as! Pin
+                vc.selectedPin = selectedPin
+            }
         }
     }
 }
