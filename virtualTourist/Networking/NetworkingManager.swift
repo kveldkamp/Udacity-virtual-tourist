@@ -63,12 +63,12 @@ class NetworkingManager {
         return components.url!
     }
     
-    class func getPhotosByLocation(lat: Double, lon: Double, completion: @escaping ([PhotoObject], Error?) -> Void){
+    class func getPhotosByLocation(lat: Double, lon: Double, page: Int, completion: @escaping ([PhotoObject], Error?) -> Void){
         let methodParameters: [String:String] = [
             "method" : Constants.flickrSearch.methodType,
             "api_key" : Constants.flickrApiKey,
             "per_page" : "21",
-            "page" : "1",
+            "page" : String(page),
             "format" : "json",
             "nojsoncallback" : "1",
             "lat" : String(lat),

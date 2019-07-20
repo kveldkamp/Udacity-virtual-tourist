@@ -23,8 +23,9 @@ class LocationPhotos: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     var photos = [Photo]()
     var selectedPin : Pin!
-    var photoURLArray : [String] = [String]()
-    var photoArrayNonCoreData = [UIImage]()
+    var selectedIndexPaths = [NSIndexPath]()
+    var pageNumber = 1
+    var photosToDelete = false
     
     
     override func viewDidLoad() {
@@ -48,7 +49,24 @@ class LocationPhotos: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     
     @IBAction func getNewCollection(_ sender: UIButton) {
-        getFlickrPhotos()
+        
+        //When button = delete
+        if photosToDelete {
+            deletePhotos()
+            self.collectionView.reloadData()
+            photosToDelete = false
+            newCollectionButton.setTitle("New Collection", for: .normal)
+        }
+        
+        else{
+            for photo in photos {
+                CoreDataManager.getContext().delete(photo)
+            }
+            CoreDataManager.saveContext()
+            photos.removeAll()
+            pageNumber += 1
+            getFlickrPhotos(pageNumber: pageNumber)
+        }
     }
     
     @IBAction func goBack(_ sender: Any) {
@@ -92,12 +110,33 @@ class LocationPhotos: UIViewController, UICollectionViewDelegate, UICollectionVi
             print("\(data.count) photos from core data fetched.")
             photos = data
         } else {
-            getFlickrPhotos()
+            getFlickrPhotos(pageNumber: pageNumber)
         }
     }
     
-    func getFlickrPhotos(){
-        NetworkingManager.getPhotosByLocation(lat: selectedPin.latitude, lon: selectedPin.longitude, completion: handleFlickrSearchResponse(results:error:))
+    
+    func deletePhotos() {
+        selectedIndexPaths.sort{$1.row < $0.row} //sort in reverse prior to deleting
+        if selectedIndexPaths.count > 0 {
+            for indexPath in selectedIndexPaths {
+                let photo = photos[indexPath.row]
+                CoreDataManager.getContext().delete(photo)
+                self.photos.remove(at: indexPath.row)
+                
+                
+            }
+            CoreDataManager.saveContext()
+            var selectedIndexPathsNonNS = [IndexPath]()
+            for indexPath in selectedIndexPaths{
+                selectedIndexPathsNonNS.append(indexPath as IndexPath)
+            }
+            self.collectionView.deleteItems(at: selectedIndexPathsNonNS)
+        }
+        selectedIndexPaths = [NSIndexPath]()
+    }
+    
+    func getFlickrPhotos(pageNumber: Int){
+        NetworkingManager.getPhotosByLocation(lat: selectedPin.latitude, lon: selectedPin.longitude, page: pageNumber, completion: handleFlickrSearchResponse(results:error:))
         collectionView.reloadData()
     }
     
@@ -175,8 +214,42 @@ class LocationPhotos: UIViewController, UICollectionViewDelegate, UICollectionVi
             })
         }
     }
+        
+        if selectedIndexPaths.index(of: indexPath as NSIndexPath) != nil {
+            cell.flickrImage.alpha = 0.25
+        } else {
+            cell.flickrImage.alpha = 1.0
+        }
     return cell
 }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath) as! CollectionViewCell
+        let index = selectedIndexPaths.index(of: indexPath as NSIndexPath)
+        
+        //deselect
+        if let index = index{
+            selectedIndexPaths.remove(at: index)
+            cell.flickrImage.alpha = 1.0
+        }
+        else{
+            selectedIndexPaths.append(indexPath as NSIndexPath)
+            DispatchQueue.main.async {
+                cell.flickrImage.alpha = 0.25
+            }
+        }
+        
+        if selectedIndexPaths.count > 0{
+            newCollectionButton.setTitle("Delete", for: .normal)
+            photosToDelete = true
+        }
+        
+        else{
+            newCollectionButton.setTitle("New Collection", for: .normal)
+            photosToDelete = false
+        }
+    }
+
 }
 
 
