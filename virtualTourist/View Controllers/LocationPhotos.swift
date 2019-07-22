@@ -18,6 +18,9 @@ class LocationPhotos: UIViewController, UICollectionViewDelegate, UICollectionVi
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var collectionViewLayout: UICollectionViewFlowLayout!
     @IBOutlet weak var newCollectionButton: UIButton!
+    @IBOutlet weak var mainPhotoFetchIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var fetchingPhotosLabel: UILabel!
+    
     
     
     var coordinatesToUse = CLLocationCoordinate2D()
@@ -34,8 +37,12 @@ class LocationPhotos: UIViewController, UICollectionViewDelegate, UICollectionVi
         print("here are the coords \(coordinatesToUse)")
         loadPinOnMap()
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
-        loadPhotos()
         collectionView.reloadData()
+        mainPhotoFetchIndicator.isHidden = false
+        fetchingPhotosLabel.isHidden = false
+        mainPhotoFetchIndicator.startAnimating()
+        fetchingPhotosLabel.text = "Fetching Photos.."
+        loadPhotos()
         
         
         //collection view spacing and setup
@@ -109,7 +116,11 @@ class LocationPhotos: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         if let data = fetchedResultsController.fetchedObjects, data.count > 0 {
             print("\(data.count) photos from core data fetched.")
+            mainPhotoFetchIndicator.isHidden = true
+            fetchingPhotosLabel.isHidden = true
+            mainPhotoFetchIndicator.stopAnimating()
             photos = data
+            
         } else {
             getFlickrPhotos(pageNumber: pageNumber)
         }
@@ -135,12 +146,20 @@ class LocationPhotos: UIViewController, UICollectionViewDelegate, UICollectionVi
     }
     
     func getFlickrPhotos(pageNumber: Int){
-        NetworkingManager.getPhotosByLocation(lat: selectedPin.latitude, lon: selectedPin.longitude, page: pageNumber, completion: handleFlickrSearchResponse(results:error:))
+        mainPhotoFetchIndicator.isHidden = false
+        fetchingPhotosLabel.isHidden = false
+        mainPhotoFetchIndicator.startAnimating()
+        fetchingPhotosLabel.text = "Fetching Photos.."
+        NetworkingManager.getPhotosByLocation(lat: selectedPin.latitude, lon: selectedPin.longitude, page: pageNumber, completion:
+            handleFlickrSearchResponse(results:error:))
         collectionView.reloadData()
     }
     
     
     func handleFlickrSearchResponse(results: [PhotoObject], error: Error?){
+        mainPhotoFetchIndicator.isHidden = true
+        mainPhotoFetchIndicator.stopAnimating()
+        fetchingPhotosLabel.isHidden = true
         if results.count > 0 {
             for result in results {
                 buildAndSetImageURL(result)

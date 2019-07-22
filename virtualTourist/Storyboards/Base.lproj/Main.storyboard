@@ -159,18 +159,37 @@
                                     <action selector="getNewCollection:" destination="yyd-jY-9bZ" eventType="touchUpInside" id="oor-Th-6WV"/>
                                 </connections>
                             </button>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="6N3-to-5Qm">
+                                <rect key="frame" x="167.5" y="313.5" width="40" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="40" id="BLp-rh-uIW"/>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="40" id="UsR-AS-y5Y"/>
+                                    <constraint firstAttribute="height" constant="40" id="VO9-aS-hKu"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="40" id="eD9-ZZ-d6q"/>
+                                </constraints>
+                            </activityIndicatorView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Fetching Photos.." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0mU-oC-rOf">
+                                <rect key="frame" x="120.5" y="363.5" width="134" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="6N3-to-5Qm" firstAttribute="centerY" secondItem="7VM-c7-wSI" secondAttribute="centerY" id="1jt-hM-X8c"/>
                             <constraint firstItem="uIt-da-D4s" firstAttribute="width" secondItem="7VM-c7-wSI" secondAttribute="width" id="2lS-dE-y95"/>
                             <constraint firstItem="qa3-LT-RYz" firstAttribute="top" secondItem="llN-a5-ESw" secondAttribute="bottom" id="4pJ-mt-0eC"/>
                             <constraint firstItem="uIt-da-D4s" firstAttribute="centerX" secondItem="BDl-ek-RUb" secondAttribute="centerX" id="FVj-mC-d3e"/>
+                            <constraint firstItem="0mU-oC-rOf" firstAttribute="top" secondItem="6N3-to-5Qm" secondAttribute="bottom" constant="10" id="JvJ-fu-DFo"/>
                             <constraint firstItem="qa3-LT-RYz" firstAttribute="centerX" secondItem="7VM-c7-wSI" secondAttribute="centerX" id="NK5-me-4Il"/>
                             <constraint firstItem="llN-a5-ESw" firstAttribute="top" secondItem="BDl-ek-RUb" secondAttribute="top" id="Pse-yR-LWe"/>
                             <constraint firstItem="KR3-v2-TH5" firstAttribute="top" secondItem="uIt-da-D4s" secondAttribute="bottom" id="QLD-cc-N6v"/>
                             <constraint firstItem="KR3-v2-TH5" firstAttribute="centerX" secondItem="BDl-ek-RUb" secondAttribute="centerX" id="Z3b-nd-bC5"/>
                             <constraint firstItem="KR3-v2-TH5" firstAttribute="bottom" secondItem="BDl-ek-RUb" secondAttribute="bottom" id="dhb-d8-szJ"/>
                             <constraint firstItem="qa3-LT-RYz" firstAttribute="height" secondItem="7VM-c7-wSI" secondAttribute="height" multiplier="0.25" id="fQW-Oy-gYq"/>
+                            <constraint firstItem="0mU-oC-rOf" firstAttribute="centerX" secondItem="7VM-c7-wSI" secondAttribute="centerX" id="lr4-jg-Prf"/>
+                            <constraint firstItem="6N3-to-5Qm" firstAttribute="centerX" secondItem="7VM-c7-wSI" secondAttribute="centerX" id="mtG-FI-HIb"/>
                             <constraint firstItem="llN-a5-ESw" firstAttribute="width" secondItem="7VM-c7-wSI" secondAttribute="width" id="nNi-Js-THg"/>
                             <constraint firstItem="llN-a5-ESw" firstAttribute="centerX" secondItem="BDl-ek-RUb" secondAttribute="centerX" id="o5A-oy-0Cu"/>
                             <constraint firstItem="KR3-v2-TH5" firstAttribute="width" secondItem="7VM-c7-wSI" secondAttribute="width" id="rv4-xe-1Bm"/>
@@ -182,6 +201,8 @@
                     <connections>
                         <outlet property="collectionView" destination="uIt-da-D4s" id="k63-qk-D73"/>
                         <outlet property="collectionViewLayout" destination="aRw-4R-N63" id="w9g-dh-j1X"/>
+                        <outlet property="fetchingPhotosLabel" destination="0mU-oC-rOf" id="i0V-XR-Nb8"/>
+                        <outlet property="mainPhotoFetchIndicator" destination="6N3-to-5Qm" id="QE4-5N-BXA"/>
                         <outlet property="mapView" destination="qa3-LT-RYz" id="xko-Ta-GBL"/>
                         <outlet property="navBar" destination="llN-a5-ESw" id="JjY-ro-q9B"/>
                         <outlet property="newCollectionButton" destination="KR3-v2-TH5" id="FnC-DW-Nq2"/>
